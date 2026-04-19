@@ -2,7 +2,7 @@
 
 A modern ecommerce storefront built with **React + Vite + Tailwind CSS**.
 ## Live Demo
-Deployed on Vercel: https://ecommerce-frontend-xyz.vercel.app
+Deployed on Vercel: https://ecommerce-frontend-mu-neon.vercel.app/
 
 ## Tech Stack
 - React 18
