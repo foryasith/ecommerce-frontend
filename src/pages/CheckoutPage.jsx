@@ -143,7 +143,7 @@ export default function CheckoutPage() {
                     key={address.id}
                     className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition ${
                       selectedAddressId === address.id
-                        ? "border-indigo-300 bg-indigo-50"
+                        ? "border-[#AC9C8D] bg-[#EFECE9]"
                         : "border-gray-100 hover:border-gray-200"
                     }`}
                   >
@@ -161,7 +161,7 @@ export default function CheckoutPage() {
                           {address.fullName}
                         </span>
                         {address.isDefault && (
-                          <span className="text-xs bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full">
+                          <span style={{ backgroundColor: "#E3C1B4", color: "#610C27" }} className="text-xs px-2 py-0.5 rounded-full">
                             Default
                           </span>
                         )}
@@ -195,7 +195,7 @@ export default function CheckoutPage() {
                   key={method.value}
                   className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition ${
                     paymentMethod === method.value
-                      ? "border-indigo-300 bg-indigo-50"
+                      ? "border-[#AC9C8D] bg-[#EFECE9]"
                       : "border-gray-100 hover:border-gray-200"
                   }`}
                 >
@@ -256,7 +256,7 @@ export default function CheckoutPage() {
                 <span className="text-sm font-semibold text-gray-700">
                   Total
                 </span>
-                <span className="text-lg font-bold text-indigo-600">
+                <span style={{ color: "#610C27" }} className="text-lg font-bold">
                   ${cart.estimatedTotal.toFixed(2)}
                 </span>
               </div>
@@ -266,7 +266,7 @@ export default function CheckoutPage() {
           <button
             type="submit"
             disabled={submitting || hasNoAddresses || hasEmptyCart}
-            className="w-full bg-indigo-600 text-white py-3 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition disabled:opacity-50"
+            style={{ backgroundColor: "#610C27", color: "#EFECE9" }} className="w-full py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition disabled:opacity-50"
           >
             {submitting ? "Placing order..." : "Confirm order"}
           </button>
