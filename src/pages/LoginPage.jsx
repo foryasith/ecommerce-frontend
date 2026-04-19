@@ -29,7 +29,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-md">
+      <div style={{ backgroundColor: "#fff", borderColor: "#DDD9CE" }} className="rounded-2xl border shadow-sm p-8 w-full max-w-md">
         <h1 className="text-2xl font-bold text-gray-800 mb-1">Welcome back</h1>
         <p className="text-sm text-gray-500 mb-6">Sign in to your account</p>
 
@@ -50,7 +50,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="jane@example.com"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              style={{ backgroundColor: "#610C27", color: "#EFECE9" }} className="w-full py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
             />
           </div>
 
@@ -79,7 +79,7 @@ export default function LoginPage() {
 
         <p className="text-sm text-gray-500 text-center mt-6">
           Don't have an account?{" "}
-          <Link to="/signup" className="text-indigo-600 hover:underline font-medium">
+          <Link to="/signup" style={{ color: "#610C27" }} className="hover:underline font-medium">
             Sign up
           </Link>
         </p>
