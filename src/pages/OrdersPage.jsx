@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import OrderStatusBadge from "../components/OrderStatusBadge";
 import { getOrders } from "../services/orderService";
-import { formatCurrency, formatDate } from "../utils/formatters";
+import { formatCurrency } from "../utils/formatters";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);

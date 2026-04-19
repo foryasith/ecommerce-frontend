@@ -1,14 +1,48 @@
-const API_BASE_URL =
-  import.meta.env.VITE_CUSTOMER_API_BASE_URL ?? "http://localhost:5002";
+const API_BASE_URL = normalizeBaseUrl(
+  import.meta.env.VITE_CUSTOMER_API_BASE_URL ?? ""
+);
 
 const TOKEN_KEY = "customer_jwt";
 
+function normalizeBaseUrl(baseUrl) {
+  return baseUrl.trim().replace(/\/+$/, "");
+}
+
+function normalizeStoredToken(token) {
+  if (typeof token !== "string") {
+    return null;
+  }
+
+  const normalized = token.trim();
+  if (
+    !normalized ||
+    normalized === "undefined" ||
+    normalized === "null"
+  ) {
+    return null;
+  }
+
+  return normalized;
+}
+
 export function getCustomerToken() {
-  return localStorage.getItem(TOKEN_KEY);
+  const token = normalizeStoredToken(localStorage.getItem(TOKEN_KEY));
+  if (!token) {
+    localStorage.removeItem(TOKEN_KEY);
+    return null;
+  }
+
+  return token;
 }
 
 export function setCustomerToken(token) {
-  localStorage.setItem(TOKEN_KEY, token);
+  const normalized = normalizeStoredToken(token);
+  if (!normalized) {
+    localStorage.removeItem(TOKEN_KEY);
+    return;
+  }
+
+  localStorage.setItem(TOKEN_KEY, normalized);
 }
 
 export function clearCustomerToken() {
@@ -17,7 +51,42 @@ export function clearCustomerToken() {
 
 export function logout() {
   localStorage.removeItem(TOKEN_KEY);
-  window.location.href = "/login";
+  window.location.assign("/login");
+}
+
+function extractResponseMessage(body, textBody) {
+  return (
+    body?.message ??
+    body?.Message ??
+    (typeof textBody === "string" && textBody.trim() ? textBody.trim() : "")
+  );
+}
+
+function shouldTreatAsSessionExpiry(message, authHeader) {
+  const normalized = `${message ?? ""} ${authHeader ?? ""}`.toLowerCase().trim();
+
+  if (!normalized) {
+    return true;
+  }
+
+  if (
+    normalized.includes("internal service credentials") ||
+    normalized.includes("integration failed") ||
+    normalized.includes("temporarily unavailable")
+  ) {
+    return false;
+  }
+
+  return [
+    "session expired",
+    "token expired",
+    "invalid customer token",
+    "invalid token",
+    "invalid_token",
+    "authentication",
+    "bearer",
+    "not authenticated",
+  ].some((keyword) => normalized.includes(keyword));
 }
 
 export async function apiRequest(path, options = {}, requiresAuth = false) {
@@ -37,18 +106,38 @@ export async function apiRequest(path, options = {}, requiresAuth = false) {
     headers,
   });
 
-  if (response.status === 401) {
-    clearCustomerToken();
-    window.location.href = "/login";
-    throw new Error("Session expired. Please log in again.");
-  }
-
   if (response.status === 204) return null;
 
-  const body = await response.json();
+  const contentType = response.headers.get("content-type") ?? "";
+  let body = null;
+  let textBody = "";
+
+  if (contentType.includes("application/json")) {
+    body = await response.json();
+  } else {
+    textBody = await response.text();
+  }
+
+  const message = extractResponseMessage(body, textBody);
+  const authenticateHeader = response.headers.get("www-authenticate");
+
+  if (
+    response.status === 401 &&
+    requiresAuth &&
+    shouldTreatAsSessionExpiry(message, authenticateHeader)
+  ) {
+    clearCustomerToken();
+    if (window.location.pathname !== "/login") {
+      window.location.assign("/login");
+    }
+
+    throw new Error(message || "Session expired. Please log in again.");
+  }
 
   if (!response.ok) {
-    throw new Error(body?.message ?? "Request failed.");
+    throw new Error(
+      message || `Request failed with status ${response.status}.`
+    );
   }
 
   return body;

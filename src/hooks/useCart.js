@@ -6,7 +6,7 @@ export function useCart() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  async function fetchCart() {
+  async function refetch() {
     setLoading(true);
     setError("");
     try {
@@ -20,8 +20,31 @@ export function useCart() {
   }
 
   useEffect(() => {
-    fetchCart();
+    let cancelled = false;
+
+    async function loadCart() {
+      try {
+        const res = await getCart();
+        if (!cancelled) {
+          setCart(res.data);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err.message);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadCart();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  return { cart, loading, error, refetch: fetchCart };
+  return { cart, loading, error, refetch };
 }

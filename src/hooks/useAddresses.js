@@ -6,7 +6,7 @@ export function useAddresses() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  async function fetchAddresses() {
+  async function refetch() {
     setLoading(true);
     setError("");
     try {
@@ -20,8 +20,31 @@ export function useAddresses() {
   }
 
   useEffect(() => {
-    fetchAddresses();
+    let cancelled = false;
+
+    async function loadAddresses() {
+      try {
+        const res = await getAddresses();
+        if (!cancelled) {
+          setAddresses(res.data ?? []);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err.message);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadAddresses();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  return { addresses, loading, error, refetch: fetchAddresses };
+  return { addresses, loading, error, refetch };
 }

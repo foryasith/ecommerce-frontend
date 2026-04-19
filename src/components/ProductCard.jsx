@@ -1,17 +1,38 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCustomerToken } from "../services/api";
 import { addCartItem } from "../services/cartService";
+import { useCartContext } from "../context/useCartContext";
+import { useAuth } from "../context/useAuth";
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate();
+  const { syncCart } = useCartContext();
+  const { isAuth } = useAuth();
   const [qty, setQty] = useState(1);
   const [adding, setAdding] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const quantityAvailable = Math.max(product.quantityAvailable ?? 0, 0);
+
+  function handleQuantityInputChange(event) {
+    const rawValue = Number(event.target.value);
+
+    if (!Number.isFinite(rawValue) || rawValue < 1) {
+      setQty(1);
+      return;
+    }
+
+    if (quantityAvailable > 0) {
+      setQty(Math.min(rawValue, quantityAvailable));
+      return;
+    }
+
+    setQty(rawValue);
+  }
 
   async function handleAddToCart() {
-    if (!getCustomerToken()) {
+    if (!isAuth) {
+      setError("Please log in to add items to your cart.");
       navigate("/login");
       return;
     }
@@ -19,7 +40,8 @@ export default function ProductCard({ product }) {
     setError("");
     setSuccess(false);
     try {
-      await addCartItem(product.id, qty);
+      const response = await addCartItem(product.id, qty);
+      syncCart(response?.data);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 2000);
     } catch (err) {
@@ -66,7 +88,7 @@ export default function ProductCard({ product }) {
           ${product.price.toFixed(2)}
         </span>
         <span style={{ color: "#AC9C8D" }} className="text-xs">
-          {product.quantityAvailable} left
+          {quantityAvailable} left
         </span>
       </div>
 
@@ -81,19 +103,25 @@ export default function ProductCard({ product }) {
         <input
           type="number"
           min="1"
-          max={product.quantityAvailable}
+          max={quantityAvailable || undefined}
           value={qty}
-          onChange={(e) => setQty(Number(e.target.value))}
+          onChange={handleQuantityInputChange}
           style={{ borderColor: "#DDD9CE" }}
           className="w-16 border rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none"
         />
         <button
           onClick={handleAddToCart}
-          disabled={adding || product.quantityAvailable === 0}
+          disabled={adding || quantityAvailable === 0}
           style={{ backgroundColor: "#610C27", color: "#EFECE9" }}
           className="flex-1 text-sm py-1.5 rounded-lg hover:opacity-90 transition disabled:opacity-50"
         >
-          {adding ? "Adding..." : product.quantityAvailable === 0 ? "Out of stock" : "Add to cart"}
+          {adding
+            ? "Adding..."
+            : quantityAvailable === 0
+              ? "Out of stock"
+              : !isAuth
+                ? "Login to add"
+                : "Add to cart"}
         </button>
       </div>
     </div>

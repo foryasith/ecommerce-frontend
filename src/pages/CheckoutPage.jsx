@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 import { getAddresses } from "../services/addressService";
 import { getCart } from "../services/cartService";
 import { submitCheckout } from "../services/checkoutService";
+import { useCartContext } from "../context/useCartContext";
 
 const PAYMENT_METHODS = [
   { value: "CashOnDelivery", label: "Cash on Delivery" },
@@ -13,6 +14,7 @@ const PAYMENT_METHODS = [
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
+  const { syncCart, clearCartState } = useCartContext();
 
   const [addresses, setAddresses] = useState([]);
   const [cart, setCart] = useState(null);
@@ -23,6 +25,9 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState("CashOnDelivery");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const syncCartEvent = useEffectEvent((nextCart) => {
+    syncCart(nextCart);
+  });
 
   useEffect(() => {
     async function loadData() {
@@ -35,6 +40,7 @@ export default function CheckoutPage() {
         const addrList = addrRes.data ?? [];
         setAddresses(addrList);
         setCart(cartRes.data);
+        syncCartEvent(cartRes.data);
 
         const defaultAddr = addrList.find((a) => a.isDefault) ?? addrList[0];
         if (defaultAddr) setSelectedAddressId(defaultAddr.id);
@@ -60,6 +66,11 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (cart.items.some((item) => !item.productAvailable)) {
+      setError("Your cart contains unavailable items. Update the cart before checkout.");
+      return;
+    }
+
     setSubmitting(true);
     setError("");
 
@@ -69,6 +80,7 @@ export default function CheckoutPage() {
         paymentMethod,
         notes: notes.trim() || undefined,
       });
+      clearCartState();
       navigate(`/orders/${res.data.id}`);
     } catch (err) {
       setError(err.message);
@@ -91,6 +103,8 @@ export default function CheckoutPage() {
 
   const hasNoAddresses = addresses.length === 0;
   const hasEmptyCart = !cart || !cart.items || cart.items.length === 0;
+  const hasUnavailableItems =
+    cart?.items?.some((item) => !item.productAvailable) ?? false;
 
   return (
     <Layout>
@@ -124,6 +138,12 @@ export default function CheckoutPage() {
             >
               Browse products
             </button>
+          </div>
+        )}
+
+        {hasUnavailableItems && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-700 text-sm rounded-lg px-4 py-3 mb-4">
+            Some cart items are unavailable. Go back to your cart and resolve them before checkout.
           </div>
         )}
 
@@ -243,11 +263,11 @@ export default function CheckoutPage() {
                     className="flex items-center justify-between text-sm"
                   >
                     <span className="text-gray-600">
-                      {item.product.name}{" "}
+                      {item.product?.name ?? "Unavailable product"}{" "}
                       <span className="text-gray-400">× {item.quantity}</span>
                     </span>
                     <span className="font-medium text-gray-800">
-                      ${item.lineTotal.toFixed(2)}
+                      {item.lineTotal != null ? `$${item.lineTotal.toFixed(2)}` : "—"}
                     </span>
                   </div>
                 ))}
@@ -265,7 +285,7 @@ export default function CheckoutPage() {
 
           <button
             type="submit"
-            disabled={submitting || hasNoAddresses || hasEmptyCart}
+            disabled={submitting || hasNoAddresses || hasEmptyCart || hasUnavailableItems}
             style={{ backgroundColor: "#610C27", color: "#EFECE9" }} className="w-full py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition disabled:opacity-50"
           >
             {submitting ? "Placing order..." : "Confirm order"}

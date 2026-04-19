@@ -15,8 +15,6 @@ export default function ProductsPage() {
   const PAGE_SIZE = 12;
 
   useEffect(() => {
-    setLoading(true);
-    setError("");
     getProducts({ pageNumber: page, pageSize: PAGE_SIZE, name: search })
       .then((res) => {
         setProducts(res.data.data);
@@ -28,8 +26,16 @@ export default function ProductsPage() {
 
   function handleSearch(e) {
     e.preventDefault();
+    setLoading(true);
+    setError("");
     setPage(1);
     setSearch(searchInput);
+  }
+
+  function handlePageChange(nextPage) {
+    setLoading(true);
+    setError("");
+    setPage(nextPage);
   }
 
   return (
@@ -100,7 +106,7 @@ export default function ProductsPage() {
       <Pagination
         currentPage={page}
         totalPages={totalPages}
-        onPageChange={setPage}
+        onPageChange={handlePageChange}
       />
     </Layout>
   );

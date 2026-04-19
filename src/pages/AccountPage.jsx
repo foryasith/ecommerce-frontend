@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import { getAccount, updateAccount, deleteAccount } from "../services/accountService";
 
 export default function AccountPage() {
@@ -281,7 +281,6 @@ export default function AccountPage() {
               { label: "My Orders", path: "/orders", icon: "📦" },
               { label: "Addresses", path: "/addresses", icon: "📍" },
               { label: "Cart", path: "/cart", icon: "🛒" },
-              { label: "Wishlist", path: "/wishlist", icon: "🤍" },
             ].map((link) => (
               <button
                 key={link.path}

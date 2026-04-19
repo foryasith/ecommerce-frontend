@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { loginUser } from "../services/authService";
+import { useAuth } from "../context/useAuth";
+import { loginUser, normalizeAuthResponse } from "../services/authService";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -18,7 +18,12 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const res = await loginUser(email, password);
-      login(res.Token, res.User);
+      const auth = normalizeAuthResponse(res);
+      if (!auth.token || !auth.user) {
+        throw new Error("Login response did not include a valid customer session.");
+      }
+
+      login(auth.token, auth.user);
       navigate("/products");
     } catch (err) {
       setError(err.message);

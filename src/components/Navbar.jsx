@@ -1,19 +1,10 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { useEffect, useState } from "react";
-import { getCart } from "../services/cartService";
+import { useAuth } from "../context/useAuth";
+import { useCartContext } from "../context/useCartContext";
 
 export default function Navbar() {
   const { isAuth, logout, user } = useAuth();
-  const [cartCount, setCartCount] = useState(0);
-
-  useEffect(() => {
-    if (isAuth) {
-      getCart()
-        .then((res) => setCartCount(res?.data?.totalItems ?? 0))
-        .catch(() => setCartCount(0));
-    }
-  }, [isAuth]);
+  const { cartCount } = useCartContext();
 
   return (
     <nav style={{ backgroundColor: "#050505" }} className="px-6 py-4 flex items-center justify-between">
@@ -41,9 +32,6 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            <Link to="/wishlist" style={{ color: "#DDD9CE" }} className="text-sm tracking-wide hover:opacity-70 transition">
-              Wishlist
-            </Link>
             <Link to="/cart" className="relative text-sm tracking-wide hover:opacity-70 transition" style={{ color: "#DDD9CE" }}>
               Cart
               {cartCount > 0 && (
