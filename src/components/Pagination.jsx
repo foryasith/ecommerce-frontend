@@ -6,7 +6,8 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 transition"
+        style={{ borderColor: "#DDD9CE", color: "#AC9C8D" }}
+        className="px-4 py-2 text-sm border rounded-lg hover:opacity-70 disabled:opacity-30 transition"
       >
         Previous
       </button>
@@ -15,10 +16,13 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
         <button
           key={page}
           onClick={() => onPageChange(page)}
-          className={`px-4 py-2 text-sm rounded-lg transition ${
+          style={
             page === currentPage
-              ? "bg-indigo-600 text-white"
-              : "border border-gray-200 hover:bg-gray-50"
+              ? { backgroundColor: "#610C27", color: "#EFECE9" }
+              : { borderColor: "#DDD9CE", color: "#AC9C8D" }
+          }
+          className={`px-4 py-2 text-sm rounded-lg transition ${
+            page === currentPage ? "" : "border hover:opacity-70"
           }`}
         >
           {page}
@@ -28,7 +32,8 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 transition"
+        style={{ borderColor: "#DDD9CE", color: "#AC9C8D" }}
+        className="px-4 py-2 text-sm border rounded-lg hover:opacity-70 disabled:opacity-30 transition"
       >
         Next
       </button>
