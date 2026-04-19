@@ -90,7 +90,7 @@ export default function AddressesPage() {
           {!showForm && !editingAddress && (
             <button
               onClick={() => setShowForm(true)}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition"
+              style={{ backgroundColor: "#610C27", color: "#EFECE9" }} className="px-4 py-2 rounded-lg text-sm hover:opacity-90 transition"
             >
               + Add address
             </button>
@@ -159,7 +159,7 @@ export default function AddressesPage() {
                 key={address.id}
                 className={`bg-white rounded-2xl border p-5 ${
                   address.isDefault
-                    ? "border-indigo-200 ring-1 ring-indigo-100"
+                    ? "border-[#AC9C8D] ring-1 ring-[#E3C1B4]"
                     : "border-gray-100"
                 }`}
               >
@@ -170,7 +170,7 @@ export default function AddressesPage() {
                         {address.fullName}
                       </span>
                       {address.isDefault && (
-                        <span className="text-xs bg-indigo-50 text-indigo-600 font-medium px-2 py-0.5 rounded-full">
+                        <span style={{ backgroundColor: "#E3C1B4", color: "#610C27" }} className="text-xs font-medium px-2 py-0.5 rounded-full">
                           Default
                         </span>
                       )}
@@ -214,7 +214,7 @@ export default function AddressesPage() {
           <div className="mt-6">
             <button
               onClick={() => navigate("/checkout")}
-              className="w-full bg-indigo-600 text-white py-3 rounded-xl text-sm font-medium hover:bg-indigo-700 transition"
+              style={{ backgroundColor: "#610C27", color: "#EFECE9" }} className="w-full py-3 rounded-xl text-sm font-medium hover:opacity-90 transition"
             >
               Continue to checkout
             </button>
