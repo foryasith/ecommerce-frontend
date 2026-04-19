@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import OrderStatusBadge from "../components/OrderStatusBadge";
 import { getOrderById, cancelOrder } from "../services/orderService";
+import { formatCurrency, formatDate } from "../utils/formatters";
 
 export default function OrderDetailPage() {
   const { id } = useParams();
@@ -137,11 +138,7 @@ export default function OrderDetailPage() {
                 Date placed
               </p>
               <p style={{ color: "#050505" }} className="font-medium">
-                {new Date(order.createdAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+                {formatDate(order.createdAt)}
               </p>
             </div>
             <div>
@@ -165,7 +162,7 @@ export default function OrderDetailPage() {
                 Total
               </p>
               <p style={{ color: "#610C27" }} className="font-bold text-base">
-                ${order.totalAmount.toFixed(2)}
+                {formatCurrency(order.totalAmount)}
               </p>
             </div>
           </div>
@@ -261,7 +258,7 @@ export default function OrderDetailPage() {
               Total
             </span>
             <span style={{ color: "#610C27" }} className="font-bold text-lg">
-              ${order.totalAmount.toFixed(2)}
+              {formatCurrency(order.totalAmount)}
             </span>
           </div>
         </div>
