@@ -30,41 +30,51 @@ export default function ProductCard({ product }) {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col gap-3 hover:shadow-md transition">
-      <div className="bg-indigo-50 rounded-xl h-40 flex items-center justify-center">
+    <div
+      style={{ backgroundColor: "#fff", borderColor: "#DDD9CE" }}
+      className="rounded-2xl border p-5 flex flex-col gap-3 hover:shadow-md transition"
+    >
+      <div
+        style={{ backgroundColor: "#EFECE9" }}
+        className="rounded-xl h-40 flex items-center justify-center"
+      >
         <span className="text-4xl">🛍️</span>
       </div>
 
       <div>
         <div className="flex items-center justify-between mb-1">
-          <span className="text-xs text-indigo-500 font-medium bg-indigo-50 px-2 py-0.5 rounded-full">
+          <span
+            style={{ backgroundColor: "#E3C1B4", color: "#610C27" }}
+            className="text-xs font-medium px-2 py-0.5 rounded-full"
+          >
             {product.categoryName}
           </span>
           {product.isLowStock && (
-            <span className="text-xs text-orange-500 font-medium">
-              Low stock
-            </span>
+            <span className="text-xs text-orange-500 font-medium">Low stock</span>
           )}
         </div>
-        <h3 className="font-semibold text-gray-800 text-sm mt-1">{product.name}</h3>
-        <p className="text-xs text-gray-400 mt-0.5 line-clamp-2">{product.description}</p>
+        <h3 style={{ color: "#050505" }} className="font-semibold text-sm mt-1">
+          {product.name}
+        </h3>
+        <p style={{ color: "#AC9C8D" }} className="text-xs mt-0.5 line-clamp-2">
+          {product.description}
+        </p>
       </div>
 
       <div className="flex items-center justify-between mt-auto">
-        <span className="text-lg font-bold text-indigo-600">
+        <span style={{ color: "#610C27" }} className="text-lg font-bold">
           ${product.price.toFixed(2)}
         </span>
-        <span className="text-xs text-gray-400">
+        <span style={{ color: "#AC9C8D" }} className="text-xs">
           {product.quantityAvailable} left
         </span>
       </div>
 
-      {error && (
-        <p className="text-xs text-red-500">{error}</p>
-      )}
-
+      {error && <p className="text-xs text-red-500">{error}</p>}
       {success && (
-        <p className="text-xs text-green-600 font-medium">Added to cart!</p>
+        <p style={{ color: "#610C27" }} className="text-xs font-medium">
+          Added to cart!
+        </p>
       )}
 
       <div className="flex items-center gap-2">
@@ -74,12 +84,14 @@ export default function ProductCard({ product }) {
           max={product.quantityAvailable}
           value={qty}
           onChange={(e) => setQty(Number(e.target.value))}
-          className="w-16 border border-gray-200 rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          style={{ borderColor: "#DDD9CE" }}
+          className="w-16 border rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none"
         />
         <button
           onClick={handleAddToCart}
           disabled={adding || product.quantityAvailable === 0}
-          className="flex-1 bg-indigo-600 text-white text-sm py-1.5 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
+          style={{ backgroundColor: "#610C27", color: "#EFECE9" }}
+          className="flex-1 text-sm py-1.5 rounded-lg hover:opacity-90 transition disabled:opacity-50"
         >
           {adding ? "Adding..." : product.quantityAvailable === 0 ? "Out of stock" : "Add to cart"}
         </button>
