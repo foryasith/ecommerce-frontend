@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+:root {
+  --color-black: #050505;
+  --color-burgundy: #610C27;
+  --color-taupe: #AC9C8D;
+  --color-blush: #E3C1B4;
+  --color-linen: #DDD9CE;
+  --color-cream: #EFECE9;
+}
