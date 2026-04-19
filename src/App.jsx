@@ -12,12 +12,14 @@ import OrderDetailPage from "./pages/OrderDetailPage";
 import AccountPage from "./pages/AccountPage";
 import HomePage from "./pages/HomePage";
 import WishlistPage from "./pages/WishlistPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="*" element={<NotFoundPage />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
