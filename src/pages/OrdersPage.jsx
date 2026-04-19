@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import OrderStatusBadge from "../components/OrderStatusBadge";
 import { getOrders } from "../services/orderService";
+import { formatCurrency, formatDate } from "../utils/formatters";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -113,7 +114,7 @@ export default function OrdersPage() {
                       style={{ color: "#610C27" }}
                       className="font-bold text-base"
                     >
-                      ${order.totalAmount.toFixed(2)}
+                      {formatCurrency(order.totalAmount)}
                     </p>
                     <p style={{ color: "#AC9C8D" }} className="text-xs mt-1">
                       View details →
